@@ -17,6 +17,7 @@
           <img width="60" :src="egg" />
           <p class="amount">{{ staking }}</p>
           <p class="remarks">{{ config.token.name }} staked</p>
+          <!--  STAKE -->
           <div v-if="toStake" class="sub-menu">
             <div class="input-area">
               <input type="text" placeholder="0.0" v-model="inputStake" />
@@ -32,12 +33,28 @@
               <div class="button" sub @click="toStake = false">Cancel</div>
             </div>
           </div>
-          <div v-else class="button" @click="toStake = true">Stake {{ config.token.name }}</div>
+          <!--  UNSTAKE -->
+          <div v-else-if="toUnstake" class="sub-menu">
+            <div class="input-area">
+              <input type="text" placeholder="0.0" v-model="inputUnstake" />
+              <div>
+                <span class="balance"></span>
+                <span class="max" @click="inputUnstake = staking">MAX</span>
+              </div>
+            </div>
+            <div class="buttons">
+              <div class="button" @click="withdraw">Unstake</div>
+              <div class="button" sub @click="toUnstake = false">Cancel</div>
+            </div>
+          </div>
+          <!--  BUTTON -->
+          <div v-else-if="staking === '0'" class="button" @click="toStake = true">Stake {{ config.token.name }}</div>
+          <div v-else class="button" @click="toUnstake = true">Unstake {{ config.token.name }}</div>
         </div>
-        <div class="egg" orange>
-          <img width="60" :src="egg" />
+        <div class="egg" :hide="earned === '0'" orange>
+          <img width="60" :src="earned === '0' ? egg : harvest" />
           <p class="amount">{{ earned }}</p>
-          <p class="remarks">Earned{{ config.stableToken.name }}</p>
+          <p class="remarks">Earned {{ config.stableToken.name }}</p>
           <div class="button" @click="getReward">Harvest</div>
         </div>
       </template>
@@ -59,6 +76,7 @@ export default {
 
     const froggie = require(`@/assets/VOTER/Layer ${Math.floor(Math.random() * 37) + 1}.png`)
     const egg = require(`@/assets/VOTER/egg${Math.floor(Math.random() * 10) + 1}.png`)
+    const harvest = require(`@/assets/VOTER/harvest${Math.floor(Math.random() * 5) + 1}.png`)
 
     return {
       config,
@@ -66,6 +84,7 @@ export default {
       // img
       froggie,
       egg,
+      harvest,
 
       tokenAddr: config.token.address,
       sTokenAddr: config.stableToken.address,
@@ -77,8 +96,10 @@ export default {
       earned: '0',
 
       inputStake: '',
+      inputUnstake: '',
 
       toStake: false,
+      toUnstake: false,
     }
   },
   computed: {
@@ -135,6 +156,7 @@ export default {
       const txHash = await lib.stake(this.config.voterReward, amount, this.address)
       this.inputStake = ''
       if (txHash) {
+        this.toStake = false
         this.update()
         console.log('success')
       } else {
@@ -143,10 +165,11 @@ export default {
     },
     async withdraw() {
       if (!this.address) return
-      const amount = Web3.utils.toWei(this.inputAmount)
+      const amount = Web3.utils.toWei(this.inputUnstake)
       const txHash = await lib.withdraw(this.config.voterReward, amount, this.address)
-      this.inputAmount = ''
+      this.inputUnstake = ''
       if (txHash) {
+        this.toUnstake = false
         this.update()
         console.log('success')
       } else {
@@ -205,6 +228,7 @@ export default {
     justify-content space-evenly
 
 .egg
+  width 240px
   height 100%
   display flex
   flex-direction column
@@ -264,10 +288,11 @@ export default {
       display flex
       flex-direction column
       align-items flex-end
-      justify-content space-between
+      justify-content center
       font-size 12px
     .balance
       color $gray
+      margin-bottom 6px
     .max
       width 34px
       height 16px
@@ -293,4 +318,14 @@ export default {
 
 .egg[orange]
   color $orange
+.egg[hide]
+  position relative
+  &:after
+    content ''
+    position absolute
+    top 0
+    bottom 0
+    left 0
+    right 0
+    background-color rgba($dark-background, .5)
 </style>
