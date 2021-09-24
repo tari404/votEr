@@ -1,17 +1,22 @@
 <template>
   <div id="app">
-    <!-- <Nav /> -->
+    <nav>
+      <router-link to="/">
+        <img :style="{ opacity: $route.path === '/' ? 0 : 1 }" height="32" src="~@/assets/logo.png" class="logo" />
+      </router-link>
+      <Account />
+    </nav>
     <router-view />
   </div>
 </template>
 
 <script>
-// import Nav from '@/components/Nav'
+import Account from '@/components/ui/Account'
 
 export default {
   name: 'App',
   components: {
-    // Nav,
+    Account,
   },
   created() {
     this.updateSize()
@@ -38,4 +43,13 @@ export default {
 <style lang="stylus">
 #app
   position relative
+
+nav
+  padding 24px 40px
+  height 80px
+  display flex
+  justify-content space-between
+  align-items center
+  .logo
+    display block
 </style>

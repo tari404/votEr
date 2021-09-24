@@ -5,8 +5,8 @@
 
 body
   margin 0
-  font-family Avenir, Helvetica, Arial, sans-serif
-  letter-spacing 0.05em
+  font-size 16px
+  font-family Roboto, Avenir, Helvetica, Arial, sans-serif
   -webkit-font-smoothing antialiased
   -moz-osx-font-smoothing grayscale
   background-color $main-background
@@ -21,6 +21,15 @@ p
 a
   color inherit
   text-decoration none
+
+img
+  image-rendering optimizeSpeed             /* STOP SMOOTHING, GIVE ME SPEED  */
+  image-rendering -moz-crisp-edges          /* Firefox                        */
+  image-rendering -o-crisp-edges            /* Opera                          */
+  image-rendering -webkit-optimize-contrast /* Chrome (and eventually Safari) */
+  image-rendering pixelated                 /* Chrome                         */
+  image-rendering optimize-contrast         /* CSS3 Proposed                  */
+  -ms-interpolation-mode nearest-neighbor   /* IE8+                           */
 
 // div
 //   background-color rgba(#fff, .05)
