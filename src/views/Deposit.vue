@@ -1,5 +1,5 @@
 <template>
-  <div class="deposit">
+  <div class="voter-console">
     <div class="intro-con">
       <p class="title">{{ config.token.name }} and {{ config.stableToken.name }}</p>
       <p class="intro">Deposit {{ config.token.name }} and earn {{ config.stableToken.name }}</p>
@@ -38,7 +38,6 @@
             <div class="input-area">
               <input type="text" placeholder="0.0" v-model="inputUnstake" />
               <div>
-                <span class="balance"></span>
                 <span class="max" @click="inputUnstake = staking">MAX</span>
               </div>
             </div>
@@ -59,6 +58,7 @@
         </div>
       </template>
     </div>
+    <router-link :to="`/a/${type}`" style="display: block; padding: 12px 24px">Approve</router-link>
   </div>
 </template>
 
@@ -79,6 +79,7 @@ export default {
     const harvest = require(`@/assets/VOTER/harvest${Math.floor(Math.random() * 5) + 1}.png`)
 
     return {
+      type,
       config,
 
       // img
@@ -199,133 +200,3 @@ export default {
   },
 }
 </script>
-
-<style lang="stylus" scoped>
-@import '~@/styles/color.styl'
-
-.deposit
-  margin auto
-  padding 12px 20px 100px
-  max-width 840px
-  color $main
-  .intro-con
-    padding 24px
-    position relative
-    .title
-      font-size 24px
-      font-weight 600
-      margin-bottom 10px
-    img
-      position absolute
-      right 0
-      bottom 0
-  .menu
-    width 100%
-    height 320px
-    border-radius 10px
-    background-color $dark-background
-    display flex
-    justify-content space-evenly
-
-.egg
-  width 240px
-  height 100%
-  display flex
-  flex-direction column
-  justify-content center
-  align-items center
-  hr
-    margin 0
-    border none
-    height 6px
-  .amount
-    margin-top 20px
-    font-size 18px
-    font-weight 600
-  .button
-    margin-top 28px
-    width 156px
-    height 46px
-    border-radius 4px
-    border solid 1px
-    border-color inherit
-    font-size 14px
-    font-weight 600
-    cursor pointer
-    display flex
-    justify-content center
-    align-items center
-  .remarks
-    font-size 12px
-
-  .input-area
-    margin-top 28px
-    padding 6px 70px 4px 10px
-    width 230px
-    height 46px
-    border-radius 4px
-    background-color $button
-    display flex
-    align-items center
-    overflow hidden
-    position relative
-    input
-      padding 0
-      width 100%
-      font inherit
-      font-size 14px
-      font-weight 600
-      color $content
-      background-color transparent
-      border none
-      outline none
-    > div
-      padding 4px
-      position absolute
-      top 0
-      bottom 0
-      right 0
-      display flex
-      flex-direction column
-      align-items flex-end
-      justify-content center
-      font-size 12px
-    .balance
-      color $gray
-      margin-bottom 6px
-    .max
-      width 34px
-      height 16px
-      color $content
-      background-color $max
-      border-radius 2px
-      display flex
-      justify-content center
-      align-items center
-      cursor pointer
-  .buttons
-    margin-top 8px
-    display grid
-    grid-template-columns 110px 110px
-    grid-gap 10px
-    .button
-      margin 0
-      width 110px
-      height 36px
-    .button[sub]
-      border none
-      background-color $button
-
-.egg[orange]
-  color $orange
-.egg[hide]
-  position relative
-  &:after
-    content ''
-    position absolute
-    top 0
-    bottom 0
-    left 0
-    right 0
-    background-color rgba($dark-background, .5)
-</style>

@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 
 import Home from '../views/Home'
 import Deposit from '../views/Deposit'
+import Approve from '../views/Approve'
 
 Vue.use(VueRouter)
 
@@ -14,6 +15,10 @@ const routes = [
   {
     path: '/d/:type',
     component: Deposit,
+  },
+  {
+    path: '/a/:type',
+    component: Approve,
   },
 ]
 
