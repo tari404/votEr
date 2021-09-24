@@ -3,7 +3,7 @@
     <div class="intro-con">
       <p class="title">{{ config.token.name }} and {{ config.stableToken.name }}</p>
       <p class="intro">Deposit {{ config.token.name }} and earn {{ config.stableToken.name }}</p>
-      <span class="end" v-if="!hasSponsor">Ends in {{ new Date(info[3] * 1000).toLocaleString() }}</span>
+      <span class="end" v-if="hasSponsor && info">Ends in {{ new Date(info[3] * 1000).toLocaleString() }}</span>
       <img width="150" :src="froggie" />
     </div>
     <div class="menu">
