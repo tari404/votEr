@@ -3,6 +3,7 @@ import Web3 from 'web3'
 import VoteRewardsABI from '@/libs/VoteRewards.abi.json'
 import ERC20ABI from '@/libs/ERC20.abi.json'
 
+import { aggregate } from '@makerdao/multicall';
 const web3 = new Web3('')
 
 export const config = {
@@ -10,7 +11,7 @@ export const config = {
   daiToken: '0xDa2cb026db36baDf7525AB034ef86aD66AC31333',
   voterReward: '0xd36DA705EDC9EB629Ce8FC42455D8d00B7b7b174',
 }
-
+  
 export const setProvider = (provider) => {
   web3.setProvider(provider)
 }
@@ -146,4 +147,67 @@ export const lib = {
       return ms['vote(uint256,uint256)'](argu1, argu2).send({ from })
     }
   },
+
+  async multicall(stakeToken,earnToken,voterReward,user){
+    //依次查询 用户质押代币的余额、用户earn代币余额、已经存入多少代币到合约、可以领取的奖励、
+    //依次查询 质押代币授权给合约的额度、earn代币授权给合约的额度
+    console.log(stakeToken,earnToken,voterReward,user)
+    return await aggregate(
+      [
+        {
+          target: stakeToken,
+          call: ['balanceOf(address)(uint256)', user],
+          returns: [['mystakeBalance', val => val / 10 ** 18]]
+        },
+        {
+          target: earnToken,
+          call: ['balanceOf(address)(uint256)', user],
+          returns: [['myearnBalance', val => val / 10 ** 18]]
+        },
+        {
+          target: voterReward, // getStakeBalance
+          call: ['balanceOf(address)(uint256)', user],
+          returns: [['Stake', val => val / 10 ** 18]]
+        },
+        {
+          target: voterReward, // getEarned
+          call: ['earned(address)(uint256)', user],
+          returns: [['Earned', val => val / 10 ** 18]]
+        }, 
+        {
+          target: stakeToken, 
+          call: ['allowance(address,address)(uint256)', user,voterReward],
+          returns: [['allowance_stakeToken', val => val / 10 ** 18]]
+        },
+        {
+          target: earnToken,
+          call: ['allowance(address,address)(uint256)', user,voterReward],
+          returns: [['allowance_earnToken', val => val / 10 ** 18]]
+        },
+        {
+          target: voterReward,
+          call: ['sponsor()(address)'],
+          returns: [['sponsor', val => val]]
+        },
+        {
+          target: voterReward,
+          call: ['sponsorshipAmount()(uint256)'],
+          returns: [['sponsorshipAmount', val => val / 10 ** 18]]
+        },
+        {
+          target: voterReward,
+          call: ['periodFinish()(uint256)'],
+          returns: [['periodFinish', val => val]]
+        },{
+          target: voterReward,
+          call: ['link()(string)'],
+          returns: [['link', val => val]]
+        },
+      ],
+      {
+        rpcUrl: 'https://kovan.infura.io/v3/58efee0f91844be6ae8e0316e7ea7432',
+        multicallAddress: '0x2cc8688c5f75e365aaeeb4ea8d6a480405a48d2a'
+      }
+    );
+  }
 }
