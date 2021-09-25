@@ -131,6 +131,12 @@ export default {
       this.staking = Web3.utils.fromWei(staking)
       const earned = await lib.getEarned(this.config.voterReward, this.address)
       this.earned = Number(Web3.utils.fromWei(earned)).toFixed(4)
+
+      let a = await lib.multicall(this.config.token.address,
+      this.config.stableToken.address,
+      this.config.voterReward,
+      this.address)
+      console.log('multicall:',a)
     },
     async updateAllowance() {
       if (!this.address) return
