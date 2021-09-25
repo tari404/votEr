@@ -58,7 +58,7 @@
         </div>
       </template>
     </div>
-    <router-link :to="`/a/${type}`" style="display: block; padding: 12px 24px">Approve</router-link>
+    <router-link :to="`/a/${type}`" style="display: inline-block; padding: 12px 24px">Approve</router-link>
   </div>
 </template>
 
@@ -111,36 +111,30 @@ export default {
   },
   watch: {
     address() {
-      this.updateAllowance()
       this.update()
     },
   },
   mounted() {
-    this.updateAllowance()
     this.update()
   },
   methods: {
-    update() {
-      this.updateBalance()
-    },
-    async updateBalance() {
+    async update() {
       if (!this.address) return
-      const balance = await lib.getBalance(this.tokenAddr, this.address)
-      this.balance = Web3.utils.fromWei(balance)
-      const staking = await lib.getStakeBalance(this.config.voterReward, this.address)
-      this.staking = Web3.utils.fromWei(staking)
-      const earned = await lib.getEarned(this.config.voterReward, this.address)
-      this.earned = Number(Web3.utils.fromWei(earned)).toFixed(4)
 
-      let a = await lib.multicall(this.config.token.address,
-      this.config.stableToken.address,
-      this.config.voterReward,
-      this.address)
-      console.log('multicall:',a)
-    },
-    async updateAllowance() {
-      if (!this.address) return
-      const allowance = await lib.getAllowance(this.tokenAddr, this.address, this.config.voterReward)
+      const store = await lib.multicall(
+        this.config.token.address,
+        this.config.stableToken.address,
+        this.config.voterReward,
+        this.address
+      )
+
+      // balance
+      this.balance = store.stakeBalance
+      this.staking = store.staking
+      this.earned = Number(store.earned).toFixed(4)
+
+      // allowance
+      const allowance = store.stakeTokenAllowance
       this.needApprove = allowance === '0'
       if (!this.needApprove && this.approveWaiting) {
         clearInterval(this.approveWaiting)
@@ -151,7 +145,7 @@ export default {
       if (!this.address || this.approveWaiting) return
       const txHash = await lib.approve(this.tokenAddr, this.config.voterReward, this.address)
       if (txHash) {
-        this.approveWaiting = setInterval(this.updateAllowance, 3000)
+        this.approveWaiting = setInterval(this.update, 3000)
         console.log('success')
       } else {
         console.warn('tx cancel')
