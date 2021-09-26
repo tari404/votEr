@@ -1,4 +1,5 @@
 import Web3 from 'web3'
+import Notify from 'bnc-notify'
 
 import VoteRewardsABI from '@/libs/VoteRewards.abi.json'
 import ERC20ABI from '@/libs/ERC20.abi.json'
@@ -12,6 +13,12 @@ export const config = {
   voterReward: '0xd36DA705EDC9EB629Ce8FC42455D8d00B7b7b174',
 }
 
+var notify = Notify({
+  dappId: '7141f135-fc33-450d-8e88-b13d93103b0f',
+  networkId: 42,
+  darkMode: true,
+})
+
 export const setProvider = (provider) => {
   web3.setProvider(provider)
 }
@@ -21,18 +28,19 @@ const fromWei = (input) => Web3.utils.fromWei(input.toString())
 export const lib = {
   async approve(token, vr, account) {
     const bigNumber = '0x'.padEnd(24, 'f')
-    return new web3.eth.Contract(ERC20ABI, token).methods['approve'](vr, bigNumber)
+    const sendTx = new web3.eth.Contract(ERC20ABI, token).methods['approve'](vr, bigNumber)
       .send({
         from: account,
       })
-      .catch((e) => {
-        console.warn(e)
-        return ''
-      })
+      .on('transactionHash', notify.hash)
+    return sendTx.catch((e) => {
+      console.warn(e)
+      return ''
+    })
   },
 
   async stake(vr, amount, account) {
-    return new web3.eth.Contract(VoteRewardsABI, vr).methods['stake'](amount)
+    const sendTx = new web3.eth.Contract(VoteRewardsABI, vr).methods['stake'](amount)
       .send({
         from: account,
       })
@@ -40,39 +48,59 @@ export const lib = {
         console.warn(e)
         return ''
       })
+      .on('transactionHash', notify.hash)
+    return sendTx.catch((e) => {
+      console.warn(e)
+      return ''
+    })
   },
 
   async withdraw(vr, amount, account) {
-    return new web3.eth.Contract(VoteRewardsABI, vr).methods['withdraw'](amount)
+    const sendTx = new web3.eth.Contract(VoteRewardsABI, vr).methods['withdraw'](amount)
       .send({
         from: account,
       })
-      .catch((e) => {
-        console.warn(e)
-        return ''
+      .on('transactionHash', notify.hash)
+    return sendTx.catch((e) => {
+      console.warn(e)
+      return ''
+    })
+  },
+
+  async getReward(vr, account) {
+    const sendTx = new web3.eth.Contract(VoteRewardsABI, vr).methods['getReward']()
+      .send({
+        from: account,
       })
+      .on('transactionHash', notify.hash)
+    return sendTx.catch((e) => {
+      console.warn(e)
+      return ''
+    })
   },
 
   async exit(vr, account) {
-    return new web3.eth.Contract(VoteRewardsABI, vr).methods['exit']()
+    const sendTx = new web3.eth.Contract(VoteRewardsABI, vr).methods['exit']()
       .send({
         from: account,
       })
-      .catch((e) => {
-        console.warn(e)
-        return ''
-      })
+      .on('transactionHash', notify.hash)
+    return sendTx.catch((e) => {
+      console.warn(e)
+      return ''
+    })
   },
 
   async addfun(vr, reward, link, account) {
-    return new web3.eth.Contract(VoteRewardsABI, vr).methods['addfun'](reward, link)
+    const sendTx = new web3.eth.Contract(VoteRewardsABI, vr).methods['addfun'](reward, link)
       .send({
         from: account,
       })
-      .catch((e) => {
-        console.warn(e)
-        return ''
-      })
+      .on('transactionHash', notify.hash)
+    return sendTx.catch((e) => {
+      console.warn(e)
+      return ''
+    })
   },
   async delegate(vr, addr, account) {
     return new web3.eth.Contract(VoteRewardsABI, vr).methods['delegate'](addr)
