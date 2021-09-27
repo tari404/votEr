@@ -12,7 +12,8 @@ export const config = {
   daiToken: '0xDa2cb026db36baDf7525AB034ef86aD66AC31333',
   voterReward: '0xd36DA705EDC9EB629Ce8FC42455D8d00B7b7b174',
   univ2router: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
-  weth: '0xd0A1E359811322d97991E03f863a0C30C2cF029C'
+  weth: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
+  iou: '0x801AaE0ffcf8Dfd0D41Ed236A351a254D1D8ebBf'
 }
 
 var notify = Notify({
@@ -138,10 +139,10 @@ export const lib = {
     }
   },
 
-  async multicall(stakeToken, earnToken, voterReward, user) {
+  async multicall(stakeToken, earnToken, voterReward, user, type) {
     //依次查询 用户质押代币的余额、用户earn代币余额、已经存入多少代币到合约、可以领取的奖励、
     //依次查询 质押代币授权给合约的额度、earn代币授权给合约的额度
-    // console.log(stakeToken, earnToken, voterReward, user)
+    // console.log(stakeToken, earnToken, voterReward, user, type)
     return aggregate(
       [
         {
@@ -200,7 +201,7 @@ export const lib = {
           returns: [['tokenprice', (val) => val[val.length-1]/ 10 ** 18]],
         },
         {
-          target: stakeToken,
+          target: type==1 ? stakeToken : config.iou,
           call: ['balanceOf(address)(uint256)', voterReward],
           returns: [['totalStaked', fromWei]],
         },

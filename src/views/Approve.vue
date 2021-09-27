@@ -125,7 +125,8 @@ export default {
         this.config.token.address,
         this.config.stableToken.address,
         this.config.voterReward,
-        this.address
+        this.address,
+        this.config.type
       )
       let daiprice = 1
       let weekly_reward = store.rewardRate * 7 * 24 * 60 * 60
