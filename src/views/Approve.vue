@@ -42,7 +42,7 @@
         <div class="button" @click="addfun">Sponsor</div>
       </div>
     </div>
-    <router-link :to="`/d/${type}`" style="display: inline-block; padding: 12px 24px">Deposit</router-link>
+    <router-link :to="`/d/${type}`" style="display: inline-block; padding: 12px 24px">Earn</router-link>
   </div>
 </template>
 

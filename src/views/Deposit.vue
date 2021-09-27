@@ -58,7 +58,7 @@
         </div>
       </template>
     </div>
-    <router-link :to="`/a/${type}`" style="display: inline-block; padding: 12px 24px">Approve</router-link>
+    <router-link :to="`/a/${type}`" style="display: inline-block; padding: 12px 24px">Get votes</router-link>
   </div>
 </template>
 
