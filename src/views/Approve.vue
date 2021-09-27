@@ -86,6 +86,7 @@ export default {
 
       inputReward: '',
       inputLink: '',
+      apy:''
     }
   },
   computed: {
@@ -124,8 +125,13 @@ export default {
         this.config.token.address,
         this.config.stableToken.address,
         this.config.voterReward,
-        this.address
+        this.address,
+        this.config.type
       )
+      let daiprice = 1
+      let weekly_reward = store.rewardRate * 7 * 24 * 60 * 60
+      this.apy = weekly_reward * daiprice / (store.totalStaked*store.tokenprice)*52*100
+      console.log('apy:',this.apy)
 
       // voterReward info
       this.sponsor = store.sponsor
