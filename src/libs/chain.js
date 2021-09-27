@@ -11,6 +11,8 @@ export const config = {
   compToken: '0x36fec22Af9865Fb946B7Cf5E3eaf3E707D4DEDEa',
   daiToken: '0xDa2cb026db36baDf7525AB034ef86aD66AC31333',
   voterReward: '0xd36DA705EDC9EB629Ce8FC42455D8d00B7b7b174',
+  univ2router: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+  weth: '0xd0A1E359811322d97991E03f863a0C30C2cF029C'
 }
 
 var notify = Notify({
@@ -191,6 +193,21 @@ export const lib = {
           target: voterReward,
           call: ['link()(string)'],
           returns: [['link', (val) => val]],
+        },
+        {
+          target: config.univ2router,
+          call: ['getAmountsOut(uint256,address[])(uint[])','1000000000000000000',[stakeToken,config.weth,config.daiToken]],
+          returns: [['tokenprice', (val) => val[val.length-1]/ 10 ** 18]],
+        },
+        {
+          target: stakeToken,
+          call: ['balanceOf(address)(uint256)', voterReward],
+          returns: [['totalStaked', fromWei]],
+        },
+        {
+          target: voterReward,
+          call: ['rewardRate()(uint256)'],
+          returns: [['rewardRate', fromWei]],
         },
       ],
       {
